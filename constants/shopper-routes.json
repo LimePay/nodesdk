@@ -1,0 +1,7 @@
+{
+    "CREATE": "/shoppers",
+    "GET": "/shoppers/:id",
+    "GET_ALL": "/shoppers",
+    "PATCH": "/shoppers/:id",
+    "DELETE" : "/shoppers/:id"
+}

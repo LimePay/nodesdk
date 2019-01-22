@@ -1,0 +1,54 @@
+{
+    "new_payment": {
+        "_id" : "0",
+        "status" : "NEW",
+        "date" : "01-01-2019",
+        "currency" : "bgn",
+        "shopper" : "0",
+        "vendor" : "vendor123",
+        "items" : ["item1", "item2"],
+        "fundTxData" : "object",
+        "genericTransactions" : ["tx1", "tx2"],
+        "paymentDetails" : "object",
+        "type" : "FIAT_PAYMENT"
+    },
+    "getAll" : [
+        {
+            "_id" : "0",
+            "status" : "NEW",
+            "date" : "01-01-2019",
+            "currency" : "bgn",
+            "shopper" : "0",
+            "vendor" : "vendor123",
+            "items" : ["item1", "item2"],
+            "fundTxData" : "object",
+            "genericTransactions" : ["tx1", "tx2"],
+            "paymentDetails" : "object",
+            "type" : "FIAT_PAYMENT"
+        },
+        {
+            "_id" : "1",
+            "status" : "NEW",
+            "date" : "01-01-2019",
+            "currency" : "bgn",
+            "shopper" : "0",
+            "vendor" : "vendor123",
+            "items" : ["item1", "item2"],
+            "fundTxData" : "object",
+            "genericTransactions" : ["tx1", "tx2"],
+            "paymentDetails" : "object",
+            "type" : "FIAT_PAYMENT"
+        }
+    ],
+    "shopperMetadata" : {
+        "nonce": 0,
+        "shopperAddress": "0x123",
+        "escrowAddress": "0x321"
+    },
+    "invoiceTemplate": {
+        "html":"html"
+    },
+    "receiptTemplate": {
+        "html":"html"
+    }
+}

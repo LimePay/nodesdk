@@ -1,0 +1,42 @@
+{
+    "getAll" : [
+        {
+            "_id": "0",
+            "vendor": "vendor123",
+            "firstName": "Gosho",
+            "lastName": "Ivanov",
+            "email" : "g.ivanov@abv.bg",
+            "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc032",
+            "maliciousAttempts" : 0
+        },
+        {
+            "_id": "1",
+            "vendor": "vendor123",
+            "firstName": "Alex",
+            "lastName": "Petrov",
+            "email" : "a.petrov@abv.bg",
+            "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc033",
+            "maliciousAttempts" : 0
+        }
+    ],
+    "shopper": {
+        "_id": "2",
+        "vendor": "vendor123",
+        "firstName": "Sasho",
+        "lastName": "Kostov",
+        "email" : "s.kostov@abv.bg",
+        "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
+        "maliciousAttempts" : 0
+    },
+    "updatedShopper": {
+        "_id": "2",
+        "vendor": "vendor123",
+        "firstName": "Sasho123",
+        "lastName": "Kostov123",
+        "email" : "s.kostov@abv.bg",
+        "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
+        "maliciousAttempts" : 0
+    }
+}
+
+

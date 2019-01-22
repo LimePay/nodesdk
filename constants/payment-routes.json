@@ -1,0 +1,10 @@
+{
+    "CREATE_FIAT": "/payments",
+    "CREATE_RELAYED": "/payments/relayed",
+    "GET": "/payments/:id",
+    "GET_ALL": "/payments",
+    "SEND_INVOICE": "/payments/:id/invoice",
+    "GET_INVOICE": "/payments/:id/invoice/preview",
+    "GET_RECEIPT": "/payments/:id/receipt",
+    "GET_SIGNATURE_METADATA": "/payments/metadata"
+}
