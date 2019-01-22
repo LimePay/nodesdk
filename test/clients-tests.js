@@ -501,7 +501,7 @@ describe('Clients', () => {
             }
          
             //Assert
-            assert.throws(sdk.fiatPayment._computeAuthorizationSignature.bind(this, {}, fiatPaymentData.fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR.message);
+            assert.throws(sdk.fiatPayment._computeAuthorizationSignature.bind(this, {}, fiatPaymentData.fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR);
         });
 
         it('Send Invoice successfully', async () => {  
@@ -605,7 +605,7 @@ describe('Clients', () => {
             }
 
             //Assert
-            assert.throws(sdk.relayedPayment._computeAuthorizationSignature.bind(this, {}, fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR.message);
+            assert.throws(sdk.relayedPayment._computeAuthorizationSignature.bind(this, {}, fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR);
         });
     });
 });
