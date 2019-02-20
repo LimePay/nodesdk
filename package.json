@@ -1,6 +1,6 @@
 {
-  "name": "limepay-sdk",
-  "version": "0.0.1",
+  "name": "limepay",
+  "version": "0.1.1",
   "description": "LimePay SDK is a node module for simplifying the consumption of LimePay API ",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/limelabs/lime-pay/limepay-sdk.git"
+    "url": "https://github.com/LimePay/nodesdk.git"
   },
   "keywords": [
     "LimePay",

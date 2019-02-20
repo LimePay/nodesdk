@@ -3,5 +3,6 @@
     "GET": "/shoppers/:id",
     "GET_ALL": "/shoppers",
     "PATCH": "/shoppers/:id",
-    "DELETE" : "/shoppers/:id"
+    "DELETE": "/shoppers/:id",
+    "GET_WALLET_TOKEN": "/shoppers/:id/walletToken"
 }

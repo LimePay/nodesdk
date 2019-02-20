@@ -1,22 +1,22 @@
 {
-    "getAll" : [
+    "getAll": [
         {
             "_id": "0",
             "vendor": "vendor123",
             "firstName": "Gosho",
             "lastName": "Ivanov",
-            "email" : "g.ivanov@abv.bg",
-            "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc032",
-            "maliciousAttempts" : 0
+            "email": "g.ivanov@abv.bg",
+            "walletAddress": "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc032",
+            "maliciousAttempts": 0
         },
         {
             "_id": "1",
             "vendor": "vendor123",
             "firstName": "Alex",
             "lastName": "Petrov",
-            "email" : "a.petrov@abv.bg",
-            "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc033",
-            "maliciousAttempts" : 0
+            "email": "a.petrov@abv.bg",
+            "walletAddress": "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc033",
+            "maliciousAttempts": 0
         }
     ],
     "shopper": {
@@ -24,19 +24,35 @@
         "vendor": "vendor123",
         "firstName": "Sasho",
         "lastName": "Kostov",
-        "email" : "s.kostov@abv.bg",
-        "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
-        "maliciousAttempts" : 0
+        "email": "s.kostov@abv.bg",
+        "walletAddress": "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
+        "maliciousAttempts": 0
+    },
+    "shopperWithLPWallet": {
+        "_id": "3",
+        "vendor": "vendor123",
+        "firstName": "Sasho",
+        "lastName": "Kostov",
+        "email": "s.kostov@abv.bg",
+        "walletAddress": "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
+        "maliciousAttempts": 0,
+        "useLimePayWallet": true
     },
     "updatedShopper": {
         "_id": "2",
         "vendor": "vendor123",
         "firstName": "Sasho123",
         "lastName": "Kostov123",
-        "email" : "s.kostov@abv.bg",
-        "walletAddress" : "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
-        "maliciousAttempts" : 0
+        "email": "s.kostov@abv.bg",
+        "walletAddress": "0x8E8FD30C784BBb9B80877052AAE4bd9D43BCc034",
+        "maliciousAttempts": 0
+    },
+    "getWalletToken": {
+        "walletToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlVc2VyIjoiNWMxOGRiYmE3ZGMxOGQzMGExZTk3OGYyIiwidXNlciI6IjVjMThkYjhkN2RjMThkMzBhMWU5NzhlYyIsInNob3BwZXJJZCI6IjVjNTJiYjQwMjRjNjk2NWY0N2NhN2ZhMiIsImNyZWF0ZWRPbiI6MTU1MDY1MjI4MjcwMywiaWF0IjoxNTUwNjUyMjgyLCJleHAiOjE1NTA2NTU4ODJ9.83Jx7K_FenuTcSQNrp8s5Xfl_g2NutD1RmSV23d5_Fk"
+    },
+    "getWalletTokenForShopperWithoutLPWallet": {
+        "errorName": "NOT_FOUND_ERROR",
+        "code": 3013,
+        "message": "Shopper was not found"
     }
 }
-
-
