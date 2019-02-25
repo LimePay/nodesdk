@@ -22,7 +22,7 @@ class ShoppersClient extends BaseClient {
             if (response.data.length == 0) {
                 throw ERRORS.NO_VENDOR_ERROR;
             }
-            
+
             // Set the vendor to be the default one
             bodyData.vendor = response.data[0]._id;
         }
@@ -31,18 +31,18 @@ class ShoppersClient extends BaseClient {
         return response.data;
     }
 
-    
+
     async get(shopperId) {
         const shopperGETRoute = utils.buildRouteWithId(SHOPPER_ROUTES.GET, [shopperId]);
         const response = await this.HTTPRequester.executeGETRequest(shopperGETRoute);
         return response.data;
     }
-    
+
     async getAll() {
         const response = await this.HTTPRequester.executeGETRequest(SHOPPER_ROUTES.GET_ALL);
         return response.data;
     }
-    
+
     async update(shopperId, shopperData) {
         const shopperPATCHRoute = utils.buildRouteWithId(SHOPPER_ROUTES.PATCH, [shopperId]);
         const response = await this.HTTPRequester.executePATCHRequest(shopperPATCHRoute, shopperData);
@@ -52,6 +52,12 @@ class ShoppersClient extends BaseClient {
     async delete(shopperId) {
         const shopperDELETERoute = utils.buildRouteWithId(SHOPPER_ROUTES.DELETE, [shopperId]);
         const response = await this.HTTPRequester.executeDELETERequest(shopperDELETERoute);
+        return response.data;
+    }
+
+    async getWalletToken(shopperId) {
+        const walletTokenRoute = utils.buildRouteWithId(SHOPPER_ROUTES.GET_WALLET_TOKEN, [shopperId]);
+        const response = await this.HTTPRequester.executeGETRequest(walletTokenRoute);
         return response.data;
     }
 }

@@ -1,4 +1,7 @@
 const assert = require('assert');
+const chai = require('chai');
+const expect = chai.expect;
+
 const ConnectionClient = require('./../clients/connection-client/connection-client');
 const ShoppersClient = require('./../clients/shoppers-client');
 const PaymentsClient = require('./../clients/payment-clients/payments-client');
@@ -21,16 +24,16 @@ describe('Clients', () => {
     beforeEach(async () => {
         nock(url)
             .get('/ping')
-            .reply(200, {"response":"success"});
+            .reply(200, { "response": "success" });
 
         nock(url)
             .get('/shoppers')
             .reply(200, shoppersMock.getAll);
-        
+
         nock(url)
             .get(`/shoppers/${shoppersMock.shopper._id}`)
             .reply(200, shoppersMock.shopper);
-        
+
         nock(url)
             .patch(`/shoppers/${shoppersMock.shopper._id}`)
             .reply(200, shoppersMock.updatedShopper);
@@ -40,9 +43,16 @@ describe('Clients', () => {
             .reply(200);
 
         nock(url)
+            .get(`/shoppers/${shoppersMock.shopper._id}/walletToken`)
+            .reply(404, shoppersMock.getWalletTokenForShopperWithoutLPWallet)
+        nock(url)
+            .get(`/shoppers/${shoppersMock.shopperWithLPWallet._id}/walletToken`)
+            .reply(201, shoppersMock.getWalletToken);
+
+        nock(url)
             .post('/shoppers')
             .reply(200, shoppersMock.shopper);
-        
+
         nock(url)
             .get('/vendors')
             .reply(200, vendorsMock.vendors);
@@ -86,14 +96,14 @@ describe('Clients', () => {
         sdk = await LimePay.connect({
             environment: url,
             apiKey: 'YOUR_API_KEY_HERE',
-            secret: 'YOUR_API_SECRET_HERE'	
+            secret: 'YOUR_API_SECRET_HERE'
         });
 
         executeGetSpy = sinon.spy(sdk.connection.HTTPRequester, 'executeGETRequest');
         executePOSTSpy = sinon.spy(sdk.connection.HTTPRequester, 'executePOSTRequest');
         getSignatureMetadataSpy = sinon.spy(sdk.fiatPayment, '_getSignatureMetadata');
         computeAuthorizationSignatureSpy = sinon.spy(sdk.fiatPayment, '_computeAuthorizationSignature');
-        
+
     });
 
     describe('Clients initialization', () => {
@@ -119,14 +129,14 @@ describe('Clients', () => {
     });
 
     describe('Shoppers client functionality', () => {
-        it('Should get all shoppers successfully', async () => {  
+        it('Should get all shoppers successfully', async () => {
             //Arrange
             let expectedCount = 2
             let expectedFirstShopperId = shoppersMock.getAll[0]._id
             let expectedFirstShopperFirstName = shoppersMock.getAll[0].firstName
             let expectedSecondShopperId = shoppersMock.getAll[1]._id
             let expectedSecondShopperFirstName = shoppersMock.getAll[1].firstName
-    
+
             //Act
             let shoppers = await sdk.shoppers.getAll();
 
@@ -139,7 +149,7 @@ describe('Clients', () => {
             assert(shoppers[1]._id == expectedSecondShopperId, "Second shopper id is wrong");
         });
 
-        it('Create shopper successfully', async () => {  
+        it('Create shopper successfully', async () => {
             //Arrange
             let expectedShopperId = 2
             let expectedShopperVendor = shoppersMock.shopper.vendor
@@ -147,14 +157,14 @@ describe('Clients', () => {
             let expectedShopperLastName = shoppersMock.shopper.lastName
             let expectedShopperEmail = shoppersMock.shopper.email
             let expectedShopperWalletAddress = shoppersMock.shopper.walletAddress
-    
+
             //Act
             let shopper = await sdk.shoppers.create({
                 "vendor": expectedShopperVendor,
                 "firstName": expectedShopperFirstName,
                 "lastName": expectedShopperLastName,
-                "email" : expectedShopperEmail,
-                "walletAddress" : expectedShopperWalletAddress,
+                "email": expectedShopperEmail,
+                "walletAddress": expectedShopperWalletAddress,
             });
 
             //Assert
@@ -166,20 +176,20 @@ describe('Clients', () => {
             assert(shopper.walletAddress == expectedShopperWalletAddress, "Shopper walletAddress is wrong");
         });
 
-        it('Create shopper without vendor successfully', async () => {  
+        it('Create shopper without vendor successfully', async () => {
             //Arrange
             let expectedShopperVendor = shoppersMock.shopper.vendor
             let expectedShopperFirstName = shoppersMock.shopper.firstName
             let expectedShopperLastName = shoppersMock.shopper.lastName
             let expectedShopperEmail = shoppersMock.shopper.email
             let expectedShopperWalletAddress = shoppersMock.shopper.walletAddress
-    
+
             //Act
             let shopper = await sdk.shoppers.create({
                 "firstName": expectedShopperFirstName,
                 "lastName": expectedShopperLastName,
-                "email" : expectedShopperEmail,
-                "walletAddress" : expectedShopperWalletAddress,
+                "email": expectedShopperEmail,
+                "walletAddress": expectedShopperWalletAddress,
             });
 
             //Assert
@@ -192,7 +202,7 @@ describe('Clients', () => {
             assert(shopper.walletAddress == expectedShopperWalletAddress, "Shopper walletAddress is wrong");
         });
 
-        it('[NEGATIVE] Create shopper when there are 0 vendors', async () => {  
+        it('[NEGATIVE] Create shopper when there are 0 vendors', async () => {
             //Arrange
             nock.cleanAll();
             nock(url)
@@ -203,21 +213,21 @@ describe('Clients', () => {
             let expectedShopperLastName = shoppersMock.shopper.lastName
             let expectedShopperEmail = shoppersMock.shopper.email
             let expectedShopperWalletAddress = shoppersMock.shopper.walletAddress
-    
+
             let shopperData = {
                 "firstName": expectedShopperFirstName,
                 "lastName": expectedShopperLastName,
-                "email" : expectedShopperEmail,
-                "walletAddress" : expectedShopperWalletAddress,
+                "email": expectedShopperEmail,
+                "walletAddress": expectedShopperWalletAddress,
             }
 
             //Act
 
             // Assert
-            await sdk.shoppers.create(shopperData).should.be.rejectedWith(SDK_ERRORS.NO_VENDOR_ERROR)
+            await expect(sdk.shoppers.create(shopperData)).to.be.rejectedWith(SDK_ERRORS.NO_VENDOR_ERROR)
         });
 
-        it('Get shopper successfully', async () => {  
+        it('Get shopper successfully', async () => {
             //Arrange
 
             let expectedShopperId = shoppersMock.shopper._id
@@ -226,7 +236,7 @@ describe('Clients', () => {
             let expectedShopperLastName = shoppersMock.shopper.lastName
             let expectedShopperEmail = shoppersMock.shopper.email
             let expectedShopperWalletAddress = shoppersMock.shopper.walletAddress
-    
+
             //Act
             let shopper = await sdk.shoppers.get(expectedShopperId);
 
@@ -240,7 +250,7 @@ describe('Clients', () => {
             assert(shopper.walletAddress == expectedShopperWalletAddress, "Shopper walletAddress is wrong");
         });
 
-        it('Patch shopper successfully', async () => {  
+        it('Patch shopper successfully', async () => {
             //Arrange
             let shopperId = shoppersMock.shopper._id
             let expectedShopperFirstName = shoppersMock.updatedShopper.firstName
@@ -248,7 +258,7 @@ describe('Clients', () => {
             let expectedShopperVendor = shoppersMock.shopper.vendor
             let expectedShopperEmail = shoppersMock.shopper.email
             let expectedShopperWalletAddress = shoppersMock.shopper.walletAddress
-    
+
             //Act
             let shopper = await sdk.shoppers.update(shopperId, {
                 "firstName": expectedShopperFirstName,
@@ -264,43 +274,55 @@ describe('Clients', () => {
 
         });
 
-        it('Delete shopper successfully', async () => {  
+        it('Delete shopper successfully', async () => {
             //Arrange
             let shopperId = shoppersMock.shopper._id
-    
+
             //Act
             let result = await sdk.shoppers.delete(shopperId);
             //todo fix it when delete returns proper result
             //Assert
             // assert(shopper.lastName == expectedShopperLastName, "Shopper lastName is wrong");
         });
+
+        it('Should get Wallet Token for Shopper with LP Wallet', async () => {
+            const shopperId = shoppersMock.shopperWithLPWallet._id;
+
+            const result = await sdk.shoppers.getWalletToken(shopperId);
+            assert.deepStrictEqual(result, shoppersMock.getWalletToken);
+        })
+
+        it('[NEGATIVE] Should NOT Get Wallet Token for Shopper without LP Wallet', async () => {
+            const shopperId = shoppersMock.shopper._id;
+            await expect(sdk.shoppers.getWalletToken(shopperId)).to.be.rejectedWith(shoppersMock.getWalletTokenForShopperWithoutLPWallet);
+        })
     });
 
     describe('Fiat payment client functionality', () => {
-        it('Should create payment with correct data successfully', async () => {  
+        it('Should create payment with correct data successfully', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
-                "fundTxData" : 
-                    {
-                        "weiAmount": "123",
-                        "tokenAmount":"123"
-                    },
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
+                "fundTxData":
+                {
+                    "weiAmount": "123",
+                    "tokenAmount": "123"
+                },
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
             let payment = await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig);
 
@@ -312,7 +334,7 @@ describe('Clients', () => {
             assert(payment.items[1] == fiatPaymentData.items[1], "Payment item2 is not correct.");
         });
 
-        it('Should get a single payment successfully', async () => {  
+        it('Should get a single payment successfully', async () => {
             //Arrange
 
             let paymentId = paymentsMock.new_payment._id;
@@ -330,7 +352,7 @@ describe('Clients', () => {
             assert(payment.type == expectedType, "Payment type is not correct.");
         });
 
-        it('Should get all payments successfully', async () => {  
+        it('Should get all payments successfully', async () => {
             //Arrange
 
             let expectedFirstId = paymentsMock.getAll[0]._id;
@@ -359,112 +381,112 @@ describe('Clients', () => {
             assert(payments[1].type == expectedSecondType, "Payment type is not correct.");
         });
 
-        it('[NEGATIVE] Shouldn\'t create payment with incorrect wei amount', async () => {  
+        it('[NEGATIVE] Shouldn\'t create payment with incorrect wei amount', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
-                "fundTxData" : 
-                    {
-                        "tokenAmount":"123"
-                    },
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
+                "fundTxData":
+                {
+                    "tokenAmount": "123"
+                },
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
 
             //Assert
-            await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig).should.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
+            await expect(sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig)).to.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
         });
 
-        it('[NEGATIVE] Shouldn\'t create payment without fundTxData', async () => {  
+        it('[NEGATIVE] Shouldn\'t create payment without fundTxData', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
 
             //Assert
-            await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig).should.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
+            await expect(sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig)).to.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
         });
 
-        it('[NEGATIVE] Should not compute authorizationSignature when already provided', async () => {  
+        it('[NEGATIVE] Should not compute authorizationSignature when already provided', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
                 "fundTxData": {
                     "authorizationSignature": null
                 },
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
 
             //Assert
-            await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig).should.be.rejectedWith(SDK_ERRORS.NO_FUND_TX_DATA_PROVIDED)
+            await expect(sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig)).to.be.rejectedWith(SDK_ERRORS.NO_FUND_TX_DATA_PROVIDED)
             sinon.assert.calledOnce(getSignatureMetadataSpy)
             sinon.assert.calledOnce(computeAuthorizationSignatureSpy)
         });
 
-        it('Should create payment with authorizationSignature', async () => {  
+        it('Should create payment with authorizationSignature', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
                 "fundTxData": {
                     "authorizationSignature": true
                 },
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
             let payment = await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig);
 
@@ -476,35 +498,35 @@ describe('Clients', () => {
             assert(payment.shopper == fiatPaymentData.shopper, "Fiat payment shopper is wrong");
         });
 
-        it('[NEGATIVE] Should throw sign error with invalid data', async () => {  
+        it('[NEGATIVE] Should throw sign error with invalid data', async () => {
             //Arrange
             let fiatPaymentData = {
-                "currency" : "bgn",
-                "shopper" : "0",
-                "items" : ["item1", "item2"],
-                "fundTxData" : 
-                    {
-                        "weiAmount":"123",
-                        "tokenAmount":"123"
-                    },
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
+                "fundTxData":
+                {
+                    "weiAmount": "123",
+                    "tokenAmount": "123"
+                },
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Assert
-            assert.throws(sdk.fiatPayment._computeAuthorizationSignature.bind(this, {}, fiatPaymentData.fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR);
+            await expect(sdk.fiatPayment._computeAuthorizationSignature.bind(this, {}, fiatPaymentData.fundTxData, signerWalletConfig)).to.throw().and.deep.equal(SDK_ERRORS.SIGNING_ERROR);
         });
 
-        it('Send Invoice successfully', async () => {  
+        it('Send Invoice successfully', async () => {
             //Act 
             //TODO: get a proper response 
 
@@ -525,7 +547,7 @@ describe('Clients', () => {
             assert(result.html == paymentsMock.invoiceTemplate.html, "Html is wrong");
         });
 
-        it('Get Receipt', async () => {  
+        it('Get Receipt', async () => {
             //Act 
 
             let result = await sdk.fiatPayment.getReceipt(paymentsMock.new_payment._id);
@@ -537,27 +559,27 @@ describe('Clients', () => {
     });
 
     describe('Relayed payment client functionality', () => {
-        it('Should create payment with correct data successfully', async () => {  
+        it('Should create payment with correct data successfully', async () => {
             //Arrange
             let relayedPaymentData = {
-                "shopper" : "0",
-                "fundTxData" : {
-                    "weiAmount" : "100"
+                "shopper": "0",
+                "fundTxData": {
+                    "weiAmount": "100"
                 },
-                "items" : ["item1", "item2"],
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "items": ["item1", "item2"],
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
             let payment = await sdk.relayedPayment.create(relayedPaymentData, signerWalletConfig);
 
@@ -568,36 +590,36 @@ describe('Clients', () => {
             assert(payment.items[1] == relayedPaymentData.items[1], "Payment item2 is not correct.");
         });
 
-        it('[NEGATIVE] Shouldn\'t create payment without wei amount', async () => {  
+        it('[NEGATIVE] Shouldn\'t create payment without wei amount', async () => {
             //Arrange
             let relayedPaymentData = {
-                "shopper" : "0",
-                "fundTxData" : {
+                "shopper": "0",
+                "fundTxData": {
                 },
-                "items" : ["item1", "item2"],
-                "genericTransactions" : {
-                    "to" : "0x123",
-                    "gasPrice" : "123",
-                    "gasLimit" : "321",
-                    "functionName" : "funcN",
-                    "functionParams" : "parm123"
+                "items": ["item1", "item2"],
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
                 }
             }
 
             let signerWalletConfig = {
                 privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
             }
-         
+
             //Act
 
             //Assert
-            await sdk.relayedPayment.create(relayedPaymentData, signerWalletConfig).should.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
+            await expect(sdk.relayedPayment.create(relayedPaymentData, signerWalletConfig)).to.be.rejectedWith(SDK_ERRORS.INVALID_TOKEN_AND_WEI_AMOUNT_PROVIDED)
         });
 
-        it('[NEGATIVE] Shouldn\'t create payment invalid sign data', async () => {  
+        it('[NEGATIVE] Shouldn\'t create payment invalid sign data', async () => {
             //Arrange
             let fundTxData = {
-                "weiAmount" : "100"
+                "weiAmount": "100"
             };
 
             let signerWalletConfig = {
@@ -605,7 +627,7 @@ describe('Clients', () => {
             }
 
             //Assert
-            assert.throws(sdk.relayedPayment._computeAuthorizationSignature.bind(this, {}, fundTxData, signerWalletConfig), SDK_ERRORS.SIGNING_ERROR);
+            await expect(sdk.relayedPayment._computeAuthorizationSignature.bind(this, {}, fundTxData, signerWalletConfig)).to.throw().and.deep.equal(SDK_ERRORS.SIGNING_ERROR);
         });
     });
 });
