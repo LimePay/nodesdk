@@ -1,4 +1,4 @@
-const BASE_SANDBOX = 'http://sandbox-api.limepay.io';
+const BASE_SANDBOX = 'https://sandbox-api.limepay.io';
 const BASE_PRODUCTION = 'https://api.limepay.io';
 
 module.exports = {
