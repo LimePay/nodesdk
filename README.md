@@ -7,4 +7,8 @@ SDK functionality:
 * Create/Read operations over Fiat/Relayed Payments
 * Create/Read operations over Invoices
 
-[Documentation](https://github.com/LimePay/docs/blob/latest/3.%20JS-SDK-documentation.md)
+### Releases
+
+##### Latest 0.1.2
+
+- Added support for LimePay Powered wallets. For more information visit the [Documentation](https://github.com/LimePay/docs/blob/latest/NodeSDK/SDK-documentation.md)
