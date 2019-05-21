@@ -16,13 +16,14 @@ describe('Signers', () => {
     const nonce = "1234";
     const fundSigner = ethers.Wallet.createRandom();
     const escrowAddress = ethers.Wallet.createRandom().address;
+    const gasPrice = 15;
     const addressToFund = ethers.Wallet.createRandom().address;
     const tokensToSend = ethers.utils.bigNumberify('1000000000'); // 0.000000001 tokens
     const weiToSend = ethers.utils.bigNumberify('1000000000000000000'); // 1 ether
 
     describe('Fiat Payment Signer', () => {
         it('Should initialize successfully a fiat payment signer', async () => {
-            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, addressToFund, tokensToSend, weiToSend);
+            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend);
             
             assert(fiatPaymentSigner instanceof FiatPaymentSigner, "FiatPaymentSigner has not been initialize correctly");
             assert(fiatPaymentSigner.messageToSign.constructor.name === 'Uint8Array', "FiatPaymentSigner hash is not correct after initialization");
@@ -30,14 +31,14 @@ describe('Signers', () => {
 
         it('[NEGATIVE] Should throw if try to initialize fiat payment signer with invalid parameters', async () => {
             function initFiatPaymentSigner() {
-                new FiatPaymentSigner(nonce, escrowAddress, '1234', tokensToSend, weiToSend);
+                new FiatPaymentSigner(nonce, escrowAddress, gasPrice, '1234', tokensToSend, weiToSend);
             }
 
             expect(initFiatPaymentSigner).to.throw();
         });
 
         it('Should sign fiat payment fund correctly', async () => {
-            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, addressToFund, tokensToSend, weiToSend)
+            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend)
             let signedFiatPaymentFund = await fiatPaymentSigner.sign(fundSigner);
 
             let signerAddress = ethers.utils.verifyMessage(fiatPaymentSigner.messageToSign, signedFiatPaymentFund);
@@ -45,7 +46,7 @@ describe('Signers', () => {
         });
 
         it('[NEGATIVE] Should throw if try to sign fiat payment fund with invalid ethers wallet', async () => {
-            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, addressToFund, tokensToSend, weiToSend);
+            let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend);
             
             await fiatPaymentSigner.sign({"privateKey": "fake private key"}).should.be.rejectedWith(errors.INVALID_WALLET_CONFIG)
         });
@@ -53,7 +54,7 @@ describe('Signers', () => {
 
     describe('Relayed Payment Siger', () => {
         it('Should initialize successfully a relayed payment signer', async () => {
-            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, addressToFund, weiToSend);
+            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, weiToSend);
 
             assert(relayedPaymentSigner instanceof RelayedPaymentSigner, "RelayedPaymentSigner has not been initialize correctly");
             assert(relayedPaymentSigner.messageToSign.constructor.name === 'Uint8Array', "RelayedPaymentSigner hash is not correct after initialization");
@@ -61,14 +62,14 @@ describe('Signers', () => {
 
         it('[NEGATIVE] Should throw if try to initialize relayed payment signer with invalid parameters', async () => {
             function initRelayedPaymentSigner() {
-                new RelayedPaymentSigner("fake nonce", escrowAddress, addressToFund, weiToSend);
+                new RelayedPaymentSigner("fake nonce", escrowAddress, gasPrice, addressToFund, weiToSend);
             }
 
             expect(initRelayedPaymentSigner).to.throw();
         });
 
         it('Should sign relayed payment fund successfully', async () => {
-            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, addressToFund, weiToSend);
+            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, weiToSend);
 
             let signedRelayedPaymentFund = await relayedPaymentSigner.sign(fundSigner);
 
@@ -77,18 +78,18 @@ describe('Signers', () => {
         });
 
         it('[NEGATIVE] Should throw if try to sign relayed payment fund with invalid ethers wallet', async () => {
-            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, addressToFund, weiToSend);
+            let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, weiToSend);
 
             await relayedPaymentSigner.sign({"privateKey": "fake private key"}).should.be.rejectedWith(errors.INVALID_WALLET_CONFIG)
         });
     });
 
     it('Should give you a way to sign the ready-to-use hash without using the SDK', async () => {
-        let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, addressToFund, tokensToSend, weiToSend);
-        let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, addressToFund, weiToSend);
+        let fiatPaymentSigner = new FiatPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend);
+        let relayedPaymentSigner = new RelayedPaymentSigner(nonce, escrowAddress, gasPrice, addressToFund, weiToSend);
 
-        let fiatPaymentMessageHash = ethers.utils.solidityKeccak256(['uint256', 'address', 'address', 'uint256', 'uint256'], [nonce, escrowAddress, addressToFund, tokensToSend, weiToSend]);
-        let relayedPaymentMessageHash = ethers.utils.solidityKeccak256(['uint256', 'address', 'address', 'uint256'], [nonce, escrowAddress, addressToFund, weiToSend]);
+        let fiatPaymentMessageHash = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256', 'address', 'uint256', 'uint256'], [nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend]);
+        let relayedPaymentMessageHash = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256', 'address', 'uint256'], [nonce, escrowAddress, gasPrice, addressToFund, weiToSend]);
 
         // hexlify is used to convert an array to a hex due to easier comparison
         let expectedFiatPaymentMessage = ethers.utils.hexlify(ethers.utils.arrayify(fiatPaymentMessageHash));

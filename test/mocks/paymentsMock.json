@@ -45,6 +45,12 @@
         "shopperAddress": "0x123",
         "escrowAddress": "0x321"
     },
+    "shopperMetadata_with_gas_price": {
+        "nonce": 0,
+        "shopperAddress": "0x123",
+        "escrowAddress": "0x321",
+        "gasPrice" : 15
+    },
     "invoiceTemplate": {
         "html":"html"
     },

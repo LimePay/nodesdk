@@ -15,18 +15,20 @@ class PaymentsClient extends BaseClient {
         }
         
         if (!fundTXData.authorizationSignature) {
-            const signatureMetadata = await this._getSignatureMetadata(paymentData.shopper);
+            const returnGasPrice = !(Number(fundTXData.gasPrice) || fundTXData.gasPrice == 0);
+            const signatureMetadata = await this._getSignatureMetadata(paymentData.shopper, returnGasPrice);
             const authorizationSignature = await this._computeAuthorizationSignature(signatureMetadata, fundTXData, walletConfiguration);
             fundTXData.nonce = signatureMetadata.nonce;
             fundTXData.authorizationSignature = authorizationSignature;
+            fundTXData.gasPrice = signatureMetadata.gasPrice || fundTXData.gasPrice;
         }
 
         const response = await this.HTTPRequester.executePOSTRequest(route, paymentData);
         return response.data;
     };
 
-    async _getSignatureMetadata(shopperId) {
-        const url = `${PAYMENT_ROUTES.GET_SIGNATURE_METADATA}?shopperId=${shopperId}`;
+    async _getSignatureMetadata(shopperId, returnGasPrice) {
+        const url = `${PAYMENT_ROUTES.GET_SIGNATURE_METADATA}?shopperId=${shopperId}&returnGasPrice=${returnGasPrice}`;
         const response = await this.HTTPRequester.executeGETRequest(url);
         return response.data;
     }
