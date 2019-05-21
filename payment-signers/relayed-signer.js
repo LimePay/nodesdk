@@ -1,11 +1,11 @@
 const Signer = require('./signer');
 
-const SIGNATURE_VALUE_TYPES = ['uint256', 'address', 'address', 'uint256'];
+const SIGNATURE_VALUE_TYPES = ['uint256', 'address', 'uint256', 'address', 'uint256'];
 
 class RelayedSigner extends Signer {
 
-    constructor(nonce, escrowAddress, addressToFund, weiToSend) {
-        super(SIGNATURE_VALUE_TYPES, [nonce, escrowAddress, addressToFund, weiToSend]);
+    constructor(nonce, escrowAddress, gasPrice, addressToFund, weiToSend) {
+        super(SIGNATURE_VALUE_TYPES, [nonce, escrowAddress, gasPrice, addressToFund, weiToSend]);
     }
 }
 

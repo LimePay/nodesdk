@@ -31,9 +31,9 @@ class FiatPaymentsClient extends PaymentsClient {
 
     // Implementation of an abstract method
     _computeAuthorizationSignature(signatureMetadata, fundTxData, walletConfiguration) {
-        const { nonce, escrowAddress, shopperAddress } = signatureMetadata;
+        const { nonce, gasPrice, escrowAddress, shopperAddress } = signatureMetadata;
 
-        if(!fundTxData.tokenAmount){
+        if (!fundTxData.tokenAmount){
             fundTxData.tokenAmount = 0
         }
         
@@ -42,7 +42,7 @@ class FiatPaymentsClient extends PaymentsClient {
         }
 
         try {
-            const fiatSigner = new FiatSigner(nonce, escrowAddress, shopperAddress, fundTxData.tokenAmount, fundTxData.weiAmount);
+            const fiatSigner = new FiatSigner(nonce, escrowAddress, gasPrice, shopperAddress, fundTxData.tokenAmount, fundTxData.weiAmount);
             return fiatSigner.sign(walletConfiguration);
         } catch (error) {
             throw ERRORS.SIGNING_ERROR;
