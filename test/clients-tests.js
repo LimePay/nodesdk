@@ -308,8 +308,7 @@ describe('Clients', () => {
                 "currency": "bgn",
                 "shopper": "0",
                 "items": ["item1", "item2"],
-                "fundTxData":
-                {
+                "fundTxData": {
                     "weiAmount": "123",
                     "tokenAmount": "123",
                     "gasPrice": 15

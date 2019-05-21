@@ -20,7 +20,7 @@ class PaymentsClient extends BaseClient {
             const authorizationSignature = await this._computeAuthorizationSignature(signatureMetadata, fundTXData, walletConfiguration);
             fundTXData.nonce = signatureMetadata.nonce;
             fundTXData.authorizationSignature = authorizationSignature;
-            fundTXData.gasPrice = signatureMetadata.gasPrice || fundTxData.gasPrice;
+            fundTXData.gasPrice = signatureMetadata.gasPrice || fundTXData.gasPrice;
         }
 
         const response = await this.HTTPRequester.executePOSTRequest(route, paymentData);
