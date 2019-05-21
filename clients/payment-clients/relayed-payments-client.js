@@ -12,7 +12,8 @@ class RelayedPaymentsClient extends PaymentsClient {
 
     // Implementation of an abstract method
     _computeAuthorizationSignature(signatureMetadata, fundTxData, walletConfiguration) {
-        const { nonce, gasPrice, escrowAddress, shopperAddress } = signatureMetadata;
+        const { nonce, escrowAddress, shopperAddress } = signatureMetadata;
+        const gasPrice = signatureMetadata.gasPrice || fundTxData.gasPrice;
 
         if (!fundTxData.weiAmount) {
             throw ERRORS.INVALID_WEI_AMOUNT_PROVIDED;

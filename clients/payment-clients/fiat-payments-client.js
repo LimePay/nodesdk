@@ -31,7 +31,8 @@ class FiatPaymentsClient extends PaymentsClient {
 
     // Implementation of an abstract method
     _computeAuthorizationSignature(signatureMetadata, fundTxData, walletConfiguration) {
-        const { nonce, gasPrice, escrowAddress, shopperAddress } = signatureMetadata;
+        const { nonce, escrowAddress, shopperAddress } = signatureMetadata;
+        const gasPrice = signatureMetadata.gasPrice || fundTxData.gasPrice;
 
         if (!fundTxData.tokenAmount){
             fundTxData.tokenAmount = 0

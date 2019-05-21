@@ -4,7 +4,7 @@ const SIGNATURE_VALUE_TYPES = ['uint256', 'address', 'uint256', 'address', 'uint
 
 class FiatSigner extends Signer {
 
-    constructor(nonce, escrowAddress, addressToFund, gasPrice, tokensToSend, weiToSend) {
+    constructor(nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend) {
         super(SIGNATURE_VALUE_TYPES, [nonce, escrowAddress, gasPrice, addressToFund, tokensToSend, weiToSend]);
     }
 }

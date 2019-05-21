@@ -58,8 +58,11 @@ describe('Clients', () => {
             .reply(200, vendorsMock.vendors);
 
         nock(url)
-            .get('/payments/metadata?shopperId=0')
+            .get('/payments/metadata?shopperId=0&returnGasPrice=false')
             .reply(200, paymentsMock.shopperMetadata);
+        nock(url)
+            .get('/payments/metadata?shopperId=0&returnGasPrice=true')
+            .reply(200, paymentsMock.shopperMetadata_with_gas_price);
 
         nock(url)
             .post('/payments')
@@ -308,7 +311,8 @@ describe('Clients', () => {
                 "fundTxData":
                 {
                     "weiAmount": "123",
-                    "tokenAmount": "123"
+                    "tokenAmount": "123",
+                    "gasPrice": 15
                 },
                 "genericTransactions": {
                     "to": "0x123",
@@ -333,6 +337,41 @@ describe('Clients', () => {
             assert(payment.items[0] == fiatPaymentData.items[0], "Payment item1 is not correct.");
             assert(payment.items[1] == fiatPaymentData.items[1], "Payment item2 is not correct.");
         });
+
+        it('Should create payment without gas price provided successfully', async () => {
+            //Arrange
+            let fiatPaymentData = {
+                "currency": "bgn",
+                "shopper": "0",
+                "items": ["item1", "item2"],
+                "fundTxData":
+                {
+                    "weiAmount": "123",
+                    "tokenAmount": "123",
+                },
+                "genericTransactions": {
+                    "to": "0x123",
+                    "gasPrice": "123",
+                    "gasLimit": "321",
+                    "functionName": "funcN",
+                    "functionParams": "parm123"
+                }
+            }
+
+            let signerWalletConfig = {
+                privateKey: 'A6B8FE6AC1322A67DB28626FFA23BD877880A49727045E9E4E470019BC56119D'
+            }
+
+            //Act
+            let payment = await sdk.fiatPayment.create(fiatPaymentData, signerWalletConfig);
+
+            //Assert
+            sinon.assert.calledOnce(executePOSTSpy);
+            assert(payment.currency == fiatPaymentData.currency, "Payment currency is not correct.");
+            assert(payment.shopper == fiatPaymentData.shopper, "Payment shopper is not correct.");
+            assert(payment.items[0] == fiatPaymentData.items[0], "Payment item1 is not correct.");
+            assert(payment.items[1] == fiatPaymentData.items[1], "Payment item2 is not correct.");
+        })
 
         it('Should get a single payment successfully', async () => {
             //Arrange
