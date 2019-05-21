@@ -43,7 +43,7 @@ class FiatPaymentsClient extends PaymentsClient {
         }
 
         try {
-            const fiatSigner = new FiatSigner(nonce, escrowAddress, gasPrice, shopperAddress, fundTxData.tokenAmount, fundTxData.weiAmount);
+            const fiatSigner = new FiatSigner(nonce, escrowAddress, gasPrice, shopperAddress, fundTxData.weiAmount, fundTxData.tokenAmount);
             return fiatSigner.sign(walletConfiguration);
         } catch (error) {
             throw ERRORS.SIGNING_ERROR;
