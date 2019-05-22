@@ -9,7 +9,11 @@ SDK functionality:
 
 ### Releases
 
-##### Latest 0.1.3
+##### 0.1.4 - latest
+
+- Migrate Escrow version 3
+
+##### 0.1.3
 
 - Fixes typos in the `Environment` constants
 
