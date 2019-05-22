@@ -1,6 +1,6 @@
 {
   "name": "limepay",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "LimePay SDK is a node module for simplifying the consumption of LimePay API ",
   "main": "index.js",
   "scripts": {
